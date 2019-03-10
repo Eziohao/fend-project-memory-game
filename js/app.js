@@ -17,14 +17,36 @@ function shuffle(array) {
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+        temporaryValue = array[currentIndex].innerHTML;
+        array[currentIndex].innerHTML = array[randomIndex].innerHTML;
+        array[randomIndex].innerHTML = temporaryValue;
     }
-
+    //console.log(array)
     return array;
 }
+function showAll(array){
+    // console.log(array[0].attributes[0].value)
+    // array[0].attributes[0].value='card open show'
+    for (let i=0;i<array.length;i++){
+        array[i].attributes[0].value='card open show'
+    }
 
+}
+
+function hideAll(array){
+    for(let i=0;i<array.length;i++){
+        array[i].attributes[0].value='card'
+    }
+}
+
+function init(){
+    let cards=document.querySelectorAll('.card');
+    cards=shuffle(cards)
+    showAll(cards);
+    let hide=window.setTimeout(hideAll(cards),3000)
+}
+
+init();
 
 /*
  * set up the event listener for a card. If a card is clicked:
