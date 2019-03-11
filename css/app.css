@@ -144,3 +144,15 @@ h1 {
     text-decoration: none;
     cursor: pointer;
   }
+  .start{
+    background-color: #66cc;
+    width: 197px;
+    height: 77px;
+    font-size: 3em;
+    font-family: 'Open Sans', sans-serif;
+    border-radius: 20px;
+  }
+  .startButton{
+      text-align: center
+
+  }

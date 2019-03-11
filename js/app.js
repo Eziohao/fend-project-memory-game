@@ -1,17 +1,9 @@
-/*
- * Create a list that holds all of your cards
- */
 
-
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 var modal = document.getElementsByClassName('modal');
+var c=0;
+var t;
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -22,12 +14,11 @@ function shuffle(array) {
         array[currentIndex].innerHTML = array[randomIndex].innerHTML;
         array[randomIndex].innerHTML = temporaryValue;
     }
-    //console.log(array)
+  
     return array;
 }
 function showAll(array){
-    // console.log(array[0].attributes[0].value)
-    // array[0].attributes[0].value='card open show'
+
     for (let i=0;i<array.length;i++){
         array[i].attributes[0].value='card open show'
     }
@@ -43,41 +34,60 @@ function hideAll(array){
 function checkWin(set,count){
    
     if(set.size==8){
-        // let contianer=document.querySelector('.container')
-        // let winning=document.createElement('p')
-        // winning.textContent='Finish! Your final moves are '+count
-        // contianer.appendChild(winning)
-        // console.log(count)
-       
         let moves=document.querySelector('.moves')
         moves.textContent=count;
         let stars=document.querySelector('.stars')
-        let star=document.createElement('li')
-        let fa=document.createElement('i')
-        fa.className="fa fa-star"
-        star.appendChild(fa);
+        const fragment = document.createDocumentFragment();
         if(count>25&&count<50){
-            stars.appendChild(star)
-            stars.appendChild(star)
+            for(let i=0;i<2;i++){
+            let star=document.createElement('li')
+            let fa=document.createElement('i')
+            fa.className="fa fa-star"
+            star.appendChild(fa);
+            fragment.appendChild(star)
+         }
         }
         else if(count>=50){
-            stars.appendChild(star)
+            for(let i=0;i<1;i++){
+                let star=document.createElement('li')
+                let fa=document.createElement('i')
+                fa.className="fa fa-star"
+                star.appendChild(fa);
+                fragment.appendChild(star)
+            }
             
         }
-        else{
-            stars.appendChild(star)
-            stars.appendChild(star)
-            stars.appendChild(star)
+        else if(count<=25){
+            for(let i=0;i<3;i++){
+                let star=document.createElement('li')
+                let fa=document.createElement('i')
+                fa.className="fa fa-star"
+                star.appendChild(fa);
+                fragment.appendChild(star)
+            }
         }
+        stars.appendChild(fragment)
+        stopTimer()
         modal[0].style.display = "block";
     }
 }
 function close(){
     modal[0].style.display = "none";     
 }
-
+function hideStart(){
+    let startButton=document.querySelector('.startButton')
+    startButton.style.display='none'
+}
+function clearMovesRating(){
+    let stars=document.querySelector('.stars')
+    let moves=document.querySelector('.moves')
+    moves.textContent=""
+    stars.innerHTML=""
+}
 
 function init(){
+    hideStart();
+    clearMovesRating();
     let cards=document.querySelectorAll('.card');
     let closeButton=document.querySelector('.close');
     closeButton.addEventListener('click',function(){
@@ -89,13 +99,14 @@ function init(){
     let cardSet=new Set(); //make a set to record match card
     let prev;              //make a prev to record previous event 
     let count=0;
-   setTimeout(function(){
+    setTimeout(function(){
       hideAll(cards);
+      startTimer()
       let deck=document.querySelector('.deck')
       deck.addEventListener('click',function(e){
           if(e.target.attributes[0].value!='deck'){
          
-            if(temp==0&&!cardSet.has(e.target.innerHTML)){ //check if the card in the set in case of clicking same card
+            if(temp==0&&!cardSet.has(e.target.innerHTML)){ //check if the card is in the set in case of clicking same card
                
                 temp=e.target;
                 temp.attributes[0].value='card open show';
@@ -129,17 +140,31 @@ function init(){
       }})  
    },8000)
 }
+function startGame(){
+    let start=document.querySelector('.start');
+    start.addEventListener('click',function(){
+        init()
+    })
+}
+function startTimer(){
+    document.querySelector('.time').textContent=c+" s"
+    c+=1;
+    t=setTimeout('startTimer()',1000)
+}
 
+function stopTimer(){
+    setTimeout("document.querySelector('.time').textContent=c+' s'",0);
+   
+    clearTimeout(t)
 
-init();
+}
 
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
+var restart=document.querySelector('.restart')
+restart.addEventListener('click',function(){
+    c=0
+    stopTimer();
+    init();
+})
+
+startGame();
+
