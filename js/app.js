@@ -11,6 +11,7 @@
  */
 
 // Shuffle function from http://stackoverflow.com/a/2450976
+var modal = document.getElementsByClassName('modal');
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -37,14 +38,98 @@ function hideAll(array){
     for(let i=0;i<array.length;i++){
         array[i].attributes[0].value='card'
     }
+  
 }
+function checkWin(set,count){
+   
+    if(set.size==8){
+        // let contianer=document.querySelector('.container')
+        // let winning=document.createElement('p')
+        // winning.textContent='Finish! Your final moves are '+count
+        // contianer.appendChild(winning)
+        // console.log(count)
+       
+        let moves=document.querySelector('.moves')
+        moves.textContent=count;
+        let stars=document.querySelector('.stars')
+        let star=document.createElement('li')
+        let fa=document.createElement('i')
+        fa.className="fa fa-star"
+        star.appendChild(fa);
+        if(count>25&&count<50){
+            stars.appendChild(star)
+            stars.appendChild(star)
+        }
+        else if(count>=50){
+            stars.appendChild(star)
+            
+        }
+        else{
+            stars.appendChild(star)
+            stars.appendChild(star)
+            stars.appendChild(star)
+        }
+        modal[0].style.display = "block";
+    }
+}
+function close(){
+    modal[0].style.display = "none";     
+}
+
 
 function init(){
     let cards=document.querySelectorAll('.card');
+    let closeButton=document.querySelector('.close');
+    closeButton.addEventListener('click',function(){
+        close();
+    })
     cards=shuffle(cards)
     showAll(cards);
-    let hide=window.setTimeout(hideAll(cards),3000)
+    let temp=0;
+    let cardSet=new Set(); //make a set to record match card
+    let prev;              //make a prev to record previous event 
+    let count=0;
+   setTimeout(function(){
+      hideAll(cards);
+      let deck=document.querySelector('.deck')
+      deck.addEventListener('click',function(e){
+          if(e.target.attributes[0].value!='deck'){
+         
+            if(temp==0&&!cardSet.has(e.target.innerHTML)){ //check if the card in the set in case of clicking same card
+               
+                temp=e.target;
+                temp.attributes[0].value='card open show';
+                prev=e;
+                count++
+            }
+            else{
+                if(temp.innerHTML==e.target.innerHTML&&prev.target!=e.target&&!cardSet.has(e.target.innerHTML)){ 
+                    cardSet.add(e.target.innerHTML)
+                    temp.attributes[0].value='card match';
+                    e.target.attributes[0].value='card match';
+                    temp=0
+                    count++
+                    checkWin(cardSet,count);
+                   
+                }
+                else if(temp.innerHTML!=e.target.innerHTML&&!cardSet.has(e.target.innerHTML)&&prev.target!=e.target){
+                    temp.attributes[0].value='card open show';
+                    e.target.attributes[0].value='card open show';
+                    setTimeout(function(){
+                        temp.attributes[0].value='card';
+                        e.target.attributes[0].value='card';
+                        temp=0
+                        count++
+                    },500)
+                    
+                }
+            }   
+
+           
+      }})  
+   },8000)
 }
+
 
 init();
 
